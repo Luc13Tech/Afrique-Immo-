@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="fr" id="htmlRoot">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Afrique Immo – Votre Plateforme Immobilière</title>
+  <link rel="stylesheet" href="style.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body>
+
+<!-- SPLASH -->
+<div id="splash">
+  <div class="splash-inner">
+    <div class="splash-logo"><span class="logo-icon">🏠</span><h1>Afrique<span>Immo</span></h1></div>
+    <div class="splash-tagline">L'immobilier au cœur de l'Afrique</div>
+    <div class="splash-loader"><div></div></div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app" class="hidden">
+
+  <!-- NAVBAR -->
+  <nav id="navbar">
+    <div class="nav-left">
+      <button class="menu-btn" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+      <div class="nav-logo" onclick="showPage('home')">🏠 Afrique<span>Immo</span></div>
+    </div>
+    <div class="nav-right">
+      <button class="nav-btn" onclick="openSearchBar()"><i class="fas fa-search"></i></button>
+      <button class="nav-btn" onclick="showPage('notifications')"><i class="fas fa-bell"></i><span class="badge" style="display:none">0</span></button>
+      <button class="nav-btn" onclick="showPage('messages')"><i class="fas fa-comment-dots"></i></button>
+      <div class="nav-avatar" onclick="toggleProfileMenu()">
+        <img id="navAvatar" src="https://ui-avatars.com/api/?name=U&background=C8973A&color=fff" alt="avatar"/>
+        <div id="profileMenu" class="profile-menu hidden">
+          <a onclick="showPage('profile');toggleProfileMenu()"><i class="fas fa-user"></i> <span data-i18n="myProfile">Mon Profil</span></a>
+          <a onclick="showPage('my-listings');toggleProfileMenu()"><i class="fas fa-home"></i> <span data-i18n="myListings">Mes Biens</span></a>
+          <a onclick="showPage('settings');toggleProfileMenu()"><i class="fas fa-cog"></i> <span data-i18n="settings">Paramètres</span></a>
+          <a onclick="logout()"><i class="fas fa-sign-out-alt"></i> <span data-i18n="logout">Déconnexion</span></a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- SEARCH OVERLAY -->
+  <div id="searchOverlay" class="search-overlay hidden">
+    <div class="search-overlay-inner">
+      <div class="search-overlay-bar">
+        <i class="fas fa-search"></i>
+        <input type="text" id="searchOverlayInput" placeholder="Rechercher agences, biens, personnes…" oninput="searchOverlayQuery(this.value)"/>
+        <button onclick="closeSearchBar()"><i class="fas fa-times"></i></button>
+      </div>
+      <div id="searchOverlayResults" class="search-overlay-results"></div>
+    </div>
+  </div>
+
+  <!-- SIDEBAR -->
+  <div id="sidebar" class="sidebar hidden">
+    <div class="sidebar-header">
+      <div class="sb-logo">🏠 Afrique<span>Immo</span></div>
+      <button onclick="toggleSidebar()"><i class="fas fa-times"></i></button>
+    </div>
+    <nav class="sb-nav">
+      <a onclick="nav('home')"><i class="fas fa-house"></i> <span data-i18n="home">Accueil</span></a>
+      <a onclick="nav('explore')"><i class="fas fa-compass"></i> <span data-i18n="explore">Explorer</span></a>
+      <a onclick="nav('search')"><i class="fas fa-search"></i> <span data-i18n="search">Recherche IA</span></a>
+      <a onclick="nav('publish')"><i class="fas fa-plus-circle"></i> <span data-i18n="publishBtn">Publier un bien</span></a>
+      <a onclick="nav('profile')"><i class="fas fa-user"></i> <span data-i18n="myProfile">Mon Profil</span></a>
+      <a onclick="nav('messages')"><i class="fas fa-comments"></i> <span data-i18n="messages">Messages</span></a>
+      <a onclick="nav('favorites')"><i class="fas fa-heart"></i> <span data-i18n="favorites">Favoris</span></a>
+      <a onclick="nav('notifications')"><i class="fas fa-bell"></i> <span data-i18n="notifications">Notifications</span></a>
+      <a onclick="nav('settings')"><i class="fas fa-cog"></i> <span data-i18n="settings">Paramètres</span></a>
+    </nav>
+    <div class="sb-footer">© 2025 Afrique Immo</div>
+  </div>
+  <div id="sidebarOverlay" class="overlay hidden" onclick="toggleSidebar()"></div>
+
+  <!-- BOTTOM NAV -->
+  <div class="bottom-nav">
+    <button onclick="showPage('home')" id="bn-home"><i class="fas fa-house"></i><span data-i18n="home">Accueil</span></button>
+    <button onclick="showPage('explore')" id="bn-explore"><i class="fas fa-compass"></i><span data-i18n="explore">Explorer</span></button>
+    <button class="publish-btn" onclick="showPage('publish')"><i class="fas fa-plus"></i></button>
+    <button onclick="showPage('messages')" id="bn-messages"><i class="fas fa-comment-dots"></i><span data-i18n="messages">Messages</span></button>
+    <button onclick="showPage('profile')" id="bn-profile"><i class="fas fa-user"></i><span data-i18n="profile">Profil</span></button>
+  </div>
+
+  <!-- MAIN -->
+  <main id="main-content">
+
+    <!-- HOME -->
+    <div id="page-home" class="page active">
+      <div class="hero-section">
+        <div class="hero-bg"></div>
+        <div class="hero-content">
+          <h1 class="hero-title"><span data-i18n="heroTitle">Trouvez votre <em>bien idéal</em> au Sénégal</span></h1>
+          <p class="hero-sub">Maisons · Appartements · Villas · Terrains</p>
+          <div class="hero-search">
+            <div class="search-tabs">
+              <button class="stab active" onclick="setSearchType('vendre',this)" data-i18n="forSale">À Vendre</button>
+              <button class="stab" onclick="setSearchType('louer',this)" data-i18n="forRent">À Louer</button>
+            </div>
+            <div class="search-fields">
+              <div class="sf"><i class="fas fa-map-marker-alt"></i><input type="text" id="heroLocation" data-i18n-ph="locationPh" placeholder="Zone, quartier, ville…"/></div>
+              <div class="sf"><i class="fas fa-home"></i>
+                <select id="heroType">
+                  <option value="" data-i18n="propertyType">Type de bien</option>
+                  <option value="appartement" data-i18n="apartment">Appartement</option>
+                  <option value="maison" data-i18n="house">Maison</option>
+                  <option value="villa">Villa</option>
+                  <option value="terrain" data-i18n="land">Terrain</option>
+                  <option value="bureau" data-i18n="office">Bureau</option>
+                  <option value="commerce" data-i18n="commercial">Commerce</option>
+                </select>
+              </div>
+              <div class="sf"><i class="fas fa-money-bill-wave"></i>
+                <select id="heroBudget">
+                  <option value="" data-i18n="budget">Budget</option>
+                  <option value="150000-500000">150 000 – 500 000 FCFA</option>
+                  <option value="500000-2000000">500 000 – 2M FCFA</option>
+                  <option value="2000000-10000000">2M – 10M FCFA</option>
+                  <option value="10000000-30000000">10M – 30M FCFA</option>
+                  <option value="30000000-80000000">30M – 80M FCFA</option>
+                  <option value="80000000-200000000">80M – 200M FCFA</option>
+                  <option value="200000000+">+200M FCFA</option>
+                </select>
+              </div>
+              <button class="search-btn-hero" onclick="doHeroSearch()"><i class="fas fa-search"></i> <span data-i18n="search">Rechercher</span></button>
+            </div>
+          </div>
+        </div>
+        <div class="hero-stats">
+          <div class="hstat"><span id="statListings">0</span><p data-i18n="listed">Biens listés</p></div>
+          <div class="hstat"><span id="statUsers">0</span><p data-i18n="sellers">Vendeurs</p></div>
+          <div class="hstat"><span>14</span><p data-i18n="regions">Régions</p></div>
+        </div>
+      </div>
+      <section class="section">
+        <h2 class="section-title" data-i18n="browse">Parcourir par catégorie</h2>
+        <div class="categories-grid">
+          <div class="cat-card" onclick="filterCategory('appartement')"><div class="cat-icon">🏢</div><span data-i18n="apartment">Appartements</span></div>
+          <div class="cat-card" onclick="filterCategory('maison')"><div class="cat-icon">🏡</div><span data-i18n="house">Maisons</span></div>
+          <div class="cat-card" onclick="filterCategory('villa')"><div class="cat-icon">🏰</div><span>Villas</span></div>
+          <div class="cat-card" onclick="filterCategory('terrain')"><div class="cat-icon">🌿</div><span data-i18n="land">Terrains</span></div>
+          <div class="cat-card" onclick="filterCategory('bureau')"><div class="cat-icon">🏛️</div><span data-i18n="office">Bureaux</span></div>
+          <div class="cat-card" onclick="filterCategory('commerce')"><div class="cat-icon">🏪</div><span data-i18n="commercial">Commerce</span></div>
+        </div>
+      </section>
+      <section class="section">
+        <div class="section-header">
+          <h2 class="section-title" data-i18n="recentPosts">Publications récentes</h2>
+          <button class="see-all" onclick="showPage('explore')" data-i18n="seeAll">Voir tout</button>
+        </div>
+        <div id="homeFeed" class="feed-grid"></div>
+      </section>
+      <section class="section">
+        <h2 class="section-title" data-i18n="popular">Biens populaires</h2>
+        <div id="featuredListings" class="feed-grid"></div>
+      </section>
+    </div>
+
+    <!-- EXPLORE -->
+    <div id="page-explore" class="page">
+      <div class="explore-header">
+        <h1 data-i18n="explore">Explorer</h1>
+        <div class="filter-bar">
+          <button class="filter-chip active" onclick="filterExplore('all',this)" data-i18n="all">Tous</button>
+          <button class="filter-chip" onclick="filterExplore('vendre',this)" data-i18n="forSale">À vendre</button>
+          <button class="filter-chip" onclick="filterExplore('louer',this)" data-i18n="forRent">À louer</button>
+          <button class="filter-chip" onclick="filterExplore('terrain',this)" data-i18n="land">Terrains</button>
+          <button class="filter-chip" onclick="filterExplore('villa',this)">Villas</button>
+        </div>
+      </div>
+      <div id="exploreFeed" class="tiktok-feed"></div>
+    </div>
+
+    <!-- SEARCH -->
+    <div id="page-search" class="page">
+      <div class="search-page-container">
+        <h1 class="search-page-title"><span data-i18n="search">Recherche</span> <span class="ai-badge">🤖 IA</span></h1>
+        <div class="advanced-search-form">
+          <div class="asf-group"><label data-i18n="location">Localisation</label><input type="text" id="asLocation" placeholder="Keur Massar, Dakar…"/></div>
+          <div class="asf-row">
+            <div class="asf-group"><label data-i18n="transaction">Transaction</label>
+              <select id="asTransaction"><option value="" data-i18n="all">Tous</option><option value="vendre" data-i18n="sale">Vente</option><option value="louer" data-i18n="rental">Location</option></select>
+            </div>
+            <div class="asf-group"><label data-i18n="type">Type</label>
+              <select id="asType"><option value="" data-i18n="all">Tous</option><option value="appartement" data-i18n="apartment">Appartement</option><option value="maison" data-i18n="house">Maison</option><option value="villa">Villa</option><option value="terrain" data-i18n="land">Terrain</option><option value="bureau" data-i18n="office">Bureau</option></select>
+            </div>
+          </div>
+          <div class="asf-row">
+            <div class="asf-group"><label data-i18n="minBudget">Budget min (FCFA)</label><input type="number" id="asBudgetMin" placeholder="150000"/></div>
+            <div class="asf-group"><label data-i18n="maxBudget">Budget max (FCFA)</label><input type="number" id="asBudgetMax" placeholder="500000000"/></div>
+          </div>
+          <button class="btn-primary full-width" onclick="doAdvancedSearch()"><i class="fas fa-search"></i> <span data-i18n="launchSearch">Lancer la Recherche IA</span></button>
+        </div>
+        <div id="searchResults"></div>
+      </div>
+    </div>
+
+    <!-- PUBLISH -->
+    <div id="page-publish" class="page">
+      <div class="publish-container">
+        <h1 data-i18n="publishBtn">Publier un bien</h1>
+        <div class="publish-steps">
+          <div class="step active" id="step1-ind"><span>1</span> <span data-i18n="info">Infos</span></div>
+          <div class="step-line"></div>
+          <div class="step" id="step2-ind"><span>2</span> <span data-i18n="media">Médias</span></div>
+          <div class="step-line"></div>
+          <div class="step" id="step3-ind"><span>3</span> Contact</div>
+          <div class="step-line"></div>
+          <div class="step" id="step4-ind"><span>4</span> <span data-i18n="publish">Publier</span></div>
+        </div>
+        <div id="pub-step-1" class="pub-step active">
+          <h2 data-i18n="propInfo">Informations du bien</h2>
+          <div class="form-group"><label data-i18n="titleLabel">Titre *</label><input type="text" id="pubTitle" placeholder="Ex: Belle villa R+2 à Castor"/></div>
+          <div class="form-row">
+            <div class="form-group"><label data-i18n="type">Type *</label>
+              <select id="pubType"><option value="">—</option><option value="appartement">Appartement</option><option value="maison">Maison</option><option value="villa">Villa</option><option value="terrain">Terrain</option><option value="bureau">Bureau</option><option value="commerce">Commerce</option></select>
+            </div>
+            <div class="form-group"><label data-i18n="transaction">Transaction *</label>
+              <select id="pubTransaction"><option value="">—</option><option value="vendre" data-i18n="sale">Vente</option><option value="louer" data-i18n="rental">Location</option></select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label data-i18n="price">Prix (FCFA) *</label><input type="number" id="pubPrice" placeholder="25000000"/></div>
+            <div class="form-group"><label data-i18n="surface">Surface (m²)</label><input type="number" id="pubSurface" placeholder="150"/></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label data-i18n="rooms">Chambres</label><input type="number" id="pubChambre" placeholder="3"/></div>
+            <div class="form-group"><label data-i18n="baths">Salles de bain</label><input type="number" id="pubBain" placeholder="2"/></div>
+          </div>
+          <div class="form-group"><label data-i18n="location">Localisation *</label><input type="text" id="pubLocation" placeholder="Quartier, ville, Sénégal"/></div>
+          <div class="form-group"><label data-i18n="description">Description</label><textarea id="pubDescription" rows="4" placeholder="Décrivez votre bien…"></textarea></div>
+          <div class="form-group">
+            <label data-i18n="equipment">Équipements</label>
+            <div class="equip-grid">
+              <label class="equip-item"><input type="checkbox" value="piscine"/> 🏊 Piscine</label>
+              <label class="equip-item"><input type="checkbox" value="parking"/> 🚗 Parking</label>
+              <label class="equip-item"><input type="checkbox" value="gardien"/> 👮 Gardien</label>
+              <label class="equip-item"><input type="checkbox" value="groupe"/> ⚡ Groupe</label>
+              <label class="equip-item"><input type="checkbox" value="climatisation"/> ❄️ Clim.</label>
+              <label class="equip-item"><input type="checkbox" value="cuisine"/> 🍳 Cuisine</label>
+              <label class="equip-item"><input type="checkbox" value="terrasse"/> 🌿 Terrasse</label>
+              <label class="equip-item"><input type="checkbox" value="titre"/> 📄 Titre foncier</label>
+            </div>
+          </div>
+          <button class="btn-primary" onclick="nextStep(2)" data-i18n="next">Suivant <i class="fas fa-arrow-right"></i></button>
+        </div>
+        <div id="pub-step-2" class="pub-step">
+          <h2 data-i18n="mediaTitle">Photos, Vidéos &amp; Texte</h2>
+          <div class="media-type-tabs">
+            <button class="mtab active" onclick="switchMediaTab('upload',this)"><i class="fas fa-images"></i> Photos/Vidéos</button>
+            <button class="mtab" onclick="switchMediaTab('text',this)"><i class="fas fa-font"></i> Texte</button>
+          </div>
+          <div id="mediaUploadTab">
+            <div class="media-upload-zone" onclick="document.getElementById('mediaInput').click()">
+              <i class="fas fa-cloud-upload-alt"></i>
+              <p data-i18n="clickMedia">Cliquez pour choisir photos ou vidéos</p>
+              <span>JPG, PNG, MP4 — Images max 20MB · Vidéos max 500MB</span>
+              <input type="file" id="mediaInput" multiple accept="image/*,video/*" onchange="handleMediaUpload(event)" style="display:none"/>
+            </div>
+            <div id="mediaPreview" class="media-preview-grid"></div>
+          </div>
+          <div id="mediaTextTab" class="hidden">
+            <div style="margin-bottom:12px">
+              <p style="color:var(--gray);font-size:0.85rem;margin-bottom:10px" data-i18n="chooseTemplate">Choisissez un template :</p>
+              <div class="template-grid">
+                <button class="template-btn" onclick="applyTemplate('annonce')" style="background:linear-gradient(135deg,#C8973A,#9B7020)">📋 Annonce</button>
+                <button class="template-btn" onclick="applyTemplate('urgent')" style="background:linear-gradient(135deg,#E74C3C,#922B21)">🔥 Urgent</button>
+                <button class="template-btn" onclick="applyTemplate('nouveaute')" style="background:linear-gradient(135deg,#27AE60,#1E8449)">🆕 Nouveauté</button>
+                <button class="template-btn" onclick="applyTemplate('promotion')" style="background:linear-gradient(135deg,#8E44AD,#6C3483)">💰 Promo</button>
+              </div>
+            </div>
+            <div class="text-editor-toolbar">
+              <button onclick="document.execCommand('bold')"><b>B</b></button>
+              <button onclick="document.execCommand('italic')"><i>I</i></button>
+              <button onclick="document.execCommand('underline')"><u>U</u></button>
+              <button onclick="changeTextSize('+')">A+</button>
+              <button onclick="changeTextSize('-')">A-</button>
+              <select onchange="document.execCommand('foreColor',false,this.value)">
+                <option value="#FFFFFF">⬜</option><option value="#C8973A">🟡</option>
+                <option value="#E74C3C">🔴</option><option value="#27AE60">🟢</option><option value="#3498DB">🔵</option>
+              </select>
+            </div>
+            <div id="textPublicationEditor" contenteditable="true" class="text-editor" placeholder="Rédigez votre annonce ici…"></div>
+          </div>
+          <div class="step-buttons">
+            <button class="btn-secondary" onclick="nextStep(1)"><i class="fas fa-arrow-left"></i> <span data-i18n="back">Retour</span></button>
+            <button class="btn-primary" onclick="nextStep(3)" data-i18n="next">Suivant <i class="fas fa-arrow-right"></i></button>
+          </div>
+        </div>
+        <div id="pub-step-3" class="pub-step">
+          <h2>Contact</h2>
+          <div class="form-group"><label data-i18n="phone">Téléphone *</label><input type="tel" id="pubPhone" placeholder="+221 77 000 00 00"/></div>
+          <div class="form-group"><label>WhatsApp *</label><input type="tel" id="pubWhatsapp" placeholder="+221 77 000 00 00"/></div>
+          <div class="form-group"><label data-i18n="availability">Disponibilités</label><input type="text" id="pubDispo" placeholder="Lun–Ven 9h–18h"/></div>
+          <div class="step-buttons">
+            <button class="btn-secondary" onclick="nextStep(2)"><i class="fas fa-arrow-left"></i> <span data-i18n="back">Retour</span></button>
+            <button class="btn-primary" onclick="nextStep(4)" data-i18n="next">Suivant <i class="fas fa-arrow-right"></i></button>
+          </div>
+        </div>
+        <div id="pub-step-4" class="pub-step">
+          <h2 data-i18n="previewPublish">Aperçu &amp; Publication</h2>
+          <div id="publishPreview" class="publish-preview-card"></div>
+          <div class="step-buttons">
+            <button class="btn-secondary" onclick="nextStep(3)"><i class="fas fa-arrow-left"></i> <span data-i18n="back">Retour</span></button>
+            <button class="btn-primary full-width" onclick="submitPublication()"><i class="fas fa-paper-plane"></i> <span data-i18n="publishNow">Publier maintenant</span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROPERTY DETAIL -->
+    <div id="page-property" class="page">
+      <div id="propertyDetail" class="property-detail"></div>
+    </div>
+
+    <!-- PROFILE -->
+    <div id="page-profile" class="page">
+      <div class="profile-container">
+        <div class="profile-banner"></div>
+        <div class="profile-info">
+          <div class="profile-avatar-wrap" onclick="document.getElementById('avatarInput').click()">
+            <img id="profileAvatar" src="https://ui-avatars.com/api/?name=U&background=C8973A&color=fff&size=100" alt="avatar"/>
+            <div id="verifiedBadge" class="verified-badge hidden">🔵</div>
+            <div class="avatar-cam"><i class="fas fa-camera"></i></div>
+            <input type="file" id="avatarInput" accept="image/*" onchange="handleAvatarUpload(event)" style="display:none"/>
+          </div>
+          <div class="profile-meta">
+            <h2 id="profileName">Mon Profil</h2>
+            <p id="profileBio" style="color:var(--gray);font-size:0.9rem;min-height:16px"></p>
+            <div class="profile-stats">
+              <div><span id="profilePosts">0</span><small data-i18n="posts">Publications</small></div>
+              <div><span id="profileFollowers">0</span><small data-i18n="followers">Abonnés</small></div>
+              <div><span id="profileFollowing">0</span><small data-i18n="following">Suivis</small></div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <button class="btn-primary" onclick="showPage('publish')"><i class="fas fa-plus"></i> <span data-i18n="publish">Publier</span></button>
+            <button class="btn-secondary" onclick="openEditProfile()" style="font-size:0.85rem;padding:8px 14px"><i class="fas fa-edit"></i> <span data-i18n="edit">Modifier</span></button>
+          </div>
+        </div>
+        <div class="profile-tabs">
+          <button class="ptab active" onclick="switchProfileTab('biens',this)" data-i18n="posts">Biens</button>
+          <button class="ptab" onclick="switchProfileTab('liked',this)" data-i18n="liked">Aimés</button>
+          <button class="ptab" onclick="switchProfileTab('saved',this)" data-i18n="saved">Sauvegardés</button>
+        </div>
+        <div id="profileListings" class="profile-grid"></div>
+      </div>
+    </div>
+
+    <!-- ===================== MESSAGES (like WhatsApp) ===================== -->
+    <div id="page-messages" class="page">
+      <div class="wa-container" id="waContainer">
+
+        <!-- PANEL GAUCHE : Tabs + liste -->
+        <div class="wa-left" id="waLeft">
+          <div class="wa-header">
+            <h2 data-i18n="messages">Messages</h2>
+            <div class="wa-header-actions">
+              <button onclick="showWaTab('statuses')" title="Statuts"><i class="fas fa-circle-dot"></i></button>
+              <button onclick="showWaTab('calls')" title="Appels"><i class="fas fa-phone"></i></button>
+              <button onclick="newConversationPrompt()" title="Nouveau message" class="wa-new-msg"><i class="fas fa-edit"></i></button>
+            </div>
+          </div>
+          <div class="wa-tabs">
+            <button class="wa-tab active" id="tab-chats" onclick="showWaTab('chats')" data-i18n="chats">Discussions</button>
+            <button class="wa-tab" id="tab-statuses" onclick="showWaTab('statuses')" data-i18n="statuses">Statuts</button>
+            <button class="wa-tab" id="tab-calls" onclick="showWaTab('calls')" data-i18n="calls">Appels</button>
+          </div>
+          <!-- CHATS LIST -->
+          <div id="waChats" class="wa-list">
+            <div class="wa-search-bar">
+              <i class="fas fa-search"></i>
+              <input type="text" placeholder="Rechercher ou démarrer…" oninput="filterConversations(this.value)"/>
+            </div>
+            <div id="convList" class="conv-list"></div>
+          </div>
+          <!-- STATUSES -->
+          <div id="waStatuses" class="wa-list hidden">
+            <div class="wa-status-my" onclick="addMyStatus()">
+              <div class="wa-status-avatar-wrap">
+                <img id="statusMyAvatar" src="https://ui-avatars.com/api/?name=U&background=C8973A&color=fff" alt=""/>
+                <div class="wa-status-add"><i class="fas fa-plus"></i></div>
+              </div>
+              <div>
+                <div style="font-weight:600;font-size:0.9rem" data-i18n="myStatus">Mon statut</div>
+                <div style="font-size:0.78rem;color:var(--gray)" data-i18n="addStatus">Appuyez pour ajouter un statut</div>
+              </div>
+            </div>
+            <div id="statusList" class="status-list"></div>
+          </div>
+          <!-- CALLS -->
+          <div id="waCalls" class="wa-list hidden">
+            <div id="callsList" class="calls-list"></div>
+            <div class="wa-call-new">
+              <button onclick="startCallSearch()" class="btn-primary" style="width:100%;justify-content:center">
+                <i class="fas fa-phone"></i> <span data-i18n="newCall">Nouvel appel</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- PANEL DROIT : Chat actif -->
+        <div class="wa-right" id="waRight">
+          <div class="wa-empty" id="waEmpty">
+            <div class="wa-empty-icon">💬</div>
+            <h3 data-i18n="selectChat">Sélectionnez une discussion</h3>
+            <p data-i18n="selectChatSub">Cliquez sur une conversation pour commencer</p>
+          </div>
+          <div class="wa-chat" id="waChat" style="display:none">
+            <div class="wa-chat-header" id="waChatHeader">
+              <button class="wa-back-btn" onclick="closeChat()"><i class="fas fa-arrow-left"></i></button>
+              <img id="chatAvatar" src="https://ui-avatars.com/api/?name=U&background=C8973A&color=fff" alt=""/>
+              <div class="wa-chat-info">
+                <div id="chatName" style="font-weight:600;font-size:0.95rem"></div>
+                <div id="chatStatus" style="font-size:0.75rem;color:var(--green)"></div>
+              </div>
+              <div class="wa-chat-actions">
+                <button onclick="startVideoCall()" title="Appel vidéo"><i class="fas fa-video"></i></button>
+                <button onclick="startAudioCall()" title="Appel audio"><i class="fas fa-phone"></i></button>
+                <button onclick="toggleChatMenu()" title="Menu"><i class="fas fa-ellipsis-v"></i></button>
+              </div>
+            </div>
+            <!-- Property context (shown when coming from listing) -->
+            <div id="chatPropertyCard" class="chat-prop-card hidden"></div>
+            <div class="wa-messages" id="waMessages"></div>
+            <div class="wa-input-bar">
+              <button class="wa-emoji-btn" onclick="toggleEmojiPanel()"><i class="fas fa-smile"></i></button>
+              <div class="wa-input-wrap">
+                <input type="text" id="msgInput" placeholder="Écrire un message…" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMsg();}"/>
+              </div>
+              <button class="wa-attach-btn" onclick="document.getElementById('msgFileInput').click()"><i class="fas fa-paperclip"></i></button>
+              <button class="wa-send-btn" id="waSendBtn" onclick="sendMsg()"><i class="fas fa-paper-plane"></i></button>
+              <input type="file" id="msgFileInput" accept="image/*,video/*,audio/*" onchange="sendFile(event)" style="display:none"/>
+            </div>
+            <!-- Emoji panel -->
+            <div id="emojiPanel" class="emoji-panel hidden">
+              <div class="emoji-grid" id="emojiGrid"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- ===================== END MESSAGES ===================== -->
+
+    <!-- NOTIFICATIONS -->
+    <div id="page-notifications" class="page">
+      <div class="notifications-container">
+        <h1 data-i18n="notifications">Notifications</h1>
+        <div id="notifList" class="notif-list"></div>
+      </div>
+    </div>
+
+    <!-- FAVORITES -->
+    <div id="page-favorites" class="page">
+      <div class="favorites-container"><h1>❤️ <span data-i18n="favorites">Favoris</span></h1><div id="favoritesList" class="feed-grid"></div></div>
+    </div>
+
+    <!-- MY LISTINGS -->
+    <div id="page-my-listings" class="page">
+      <div class="my-listings-container">
+        <h1 data-i18n="myListings">Mes Publications</h1>
+        <button class="btn-primary" onclick="showPage('publish')" style="margin-bottom:20px"><i class="fas fa-plus"></i> <span data-i18n="newPost">Nouvelle publication</span></button>
+        <div id="myListingsGrid" class="feed-grid"></div>
+      </div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div id="page-settings" class="page">
+      <div class="settings-container">
+        <h1 data-i18n="settings">Paramètres</h1>
+        <div class="settings-group">
+          <h3 data-i18n="account">Compte</h3>
+          <div class="setting-item" onclick="openEditProfile()"><span><i class="fas fa-user"></i> <span data-i18n="editProfile">Modifier le profil</span></span><i class="fas fa-chevron-right"></i></div>
+        </div>
+        <div class="settings-group">
+          <h3 data-i18n="language">Langue</h3>
+          <div class="setting-item">
+            <span><i class="fas fa-globe"></i> <span data-i18n="chooseLanguage">Choisir la langue</span></span>
+            <div class="lang-btns">
+              <button class="lang-btn active" id="langFR" onclick="setLanguage('fr')">🇫🇷 FR</button>
+              <button class="lang-btn" id="langEN" onclick="setLanguage('en')">🇬🇧 EN</button>
+            </div>
+          </div>
+        </div>
+        <div class="settings-group">
+          <h3 data-i18n="notifications">Notifications</h3>
+          <div class="setting-item">
+            <span><i class="fas fa-bell"></i> <span data-i18n="enableNotifs">Activer les notifications</span></span>
+            <label class="toggle"><input type="checkbox" id="notifToggle" onchange="toggleNotifSetting(this)"/><span class="slider"></span></label>
+          </div>
+        </div>
+        <div class="settings-group">
+          <h3 data-i18n="about">À propos</h3>
+          <div class="setting-item"><span><i class="fas fa-info-circle"></i> Afrique Immo v1.0</span></div>
+          <div class="setting-item"><span><i class="fas fa-envelope"></i> immobiliersn9@gmail.com</span></div>
+        </div>
+        <button class="btn-danger" onclick="logout()" style="width:100%;margin-top:16px"><i class="fas fa-sign-out-alt"></i> <span data-i18n="logout">Déconnexion</span></button>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- AUTH -->
+<div id="authOverlay" class="auth-overlay">
+  <div id="loginModal" class="auth-modal">
+    <div class="auth-logo">🏠 Afrique<span>Immo</span></div>
+    <h2 data-i18n="login">Connexion</h2>
+    <p class="auth-sub" data-i18n="loginSub">Bienvenue ! Connectez-vous à votre compte.</p>
+    <div class="form-group"><label>Email</label><input type="email" id="loginEmail" placeholder="votre@email.com"/></div>
+    <div class="form-group"><label data-i18n="password">Mot de passe</label>
+      <div class="password-wrap">
+        <input type="password" id="loginPassword" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"/>
+        <button type="button" onclick="togglePwd('loginPassword')"><i class="fas fa-eye"></i></button>
+      </div>
+    </div>
+    <button class="btn-primary full-width" onclick="doLogin()" data-i18n="loginBtn">Se connecter</button>
+    <p class="auth-switch" data-i18n="noAccount">Pas de compte ? <a onclick="showModal('register')" data-i18n="register">S'inscrire</a></p>
+    <p class="auth-switch"><a onclick="showModal('forgot')" data-i18n="forgotPwd">Mot de passe oublié ?</a></p>
+  </div>
+  <div id="registerModal" class="auth-modal hidden">
+    <div class="auth-logo">🏠 Afrique<span>Immo</span></div>
+    <h2 data-i18n="createAccount">Créer un compte</h2>
+    <div class="form-row">
+      <div class="form-group"><label data-i18n="firstName">Prénom *</label><input type="text" id="regFirstName" placeholder="Amadou"/></div>
+      <div class="form-group"><label data-i18n="lastName">Nom *</label><input type="text" id="regLastName" placeholder="Diallo"/></div>
+    </div>
+    <div class="form-group"><label>Email *</label><input type="email" id="regEmail" placeholder="votre@email.com"/></div>
+    <div class="form-group"><label data-i18n="password">Mot de passe *</label><input type="password" id="regPassword" placeholder="Min. 8 caractères"/></div>
+    <div class="form-row">
+      <div class="form-group"><label data-i18n="phone">Téléphone *</label><input type="tel" id="regPhone" placeholder="+221 77 000 00 00"/></div>
+      <div class="form-group"><label>WhatsApp *</label><input type="tel" id="regWhatsapp" placeholder="+221 77 000 00 00"/></div>
+    </div>
+    <div class="form-group"><label data-i18n="address">Adresse *</label><input type="text" id="regAddress" placeholder="Quartier, ville, Sénégal"/></div>
+    <div class="form-group">
+      <label data-i18n="idCard">Pièce d'identité * <span class="ai-badge">🤖 IA</span></label>
+      <div class="id-upload-zone" onclick="document.getElementById('idInput').click()">
+        <i class="fas fa-id-card"></i><p data-i18n="uploadId">Uploadez votre CNI ou Passeport</p><span>JPG ou PNG</span>
+        <input type="file" id="idInput" accept="image/*" onchange="handleIdUpload(event)" style="display:none"/>
+      </div>
+      <div id="idPreview" class="id-preview hidden"></div>
+    </div>
+    <div class="form-group">
+      <label class="checkbox-label"><input type="checkbox" id="regTerms"/> <span data-i18n="terms">J'accepte les conditions d'utilisation</span></label>
+    </div>
+    <button class="btn-primary full-width" onclick="doRegister()" data-i18n="createBtn">Créer mon compte</button>
+    <p class="auth-switch" data-i18n="haveAccount">Déjà inscrit ? <a onclick="showModal('login')" data-i18n="loginBtn">Se connecter</a></p>
+  </div>
+  <div id="forgotModal" class="auth-modal hidden">
+    <div class="auth-logo">🏠 Afrique<span>Immo</span></div>
+    <h2 data-i18n="forgotPwd">Mot de passe oublié</h2>
+    <div class="form-group"><label>Email</label><input type="email" id="forgotEmail" placeholder="votre@email.com"/></div>
+    <button class="btn-primary full-width" onclick="doForgot()" data-i18n="sendLink">Envoyer le lien</button>
+    <p class="auth-switch"><a onclick="showModal('login')" data-i18n="back">← Retour</a></p>
+  </div>
+</div>
+
+<!-- EDIT PROFILE -->
+<div id="editProfileModal" class="modal-overlay" style="display:none">
+  <div class="modal-box">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+      <h2 style="font-family:var(--font-display);font-size:1.3rem" data-i18n="editProfile">Modifier mon profil</h2>
+      <button onclick="closeEditProfile()" style="background:none;color:#fff;font-size:1.2rem"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label data-i18n="firstName">Prénom</label><input type="text" id="editFirstName"/></div>
+      <div class="form-group"><label data-i18n="lastName">Nom</label><input type="text" id="editLastName"/></div>
+    </div>
+    <div class="form-group"><label>Bio</label><textarea id="editBio" rows="3" style="width:100%;background:var(--dark3);border:1px solid var(--dark4);border-radius:var(--radius-sm);padding:12px;color:#fff;font-family:var(--font-body);resize:vertical"></textarea></div>
+    <div class="form-row">
+      <div class="form-group"><label data-i18n="phone">Téléphone</label><input type="tel" id="editPhone"/></div>
+      <div class="form-group"><label>WhatsApp</label><input type="tel" id="editWhatsapp"/></div>
+    </div>
+    <div class="form-group"><label data-i18n="address">Adresse</label><input type="text" id="editAddress"/></div>
+    <div style="display:flex;gap:12px;margin-top:8px">
+      <button class="btn-secondary" onclick="closeEditProfile()" style="flex:1" data-i18n="cancel">Annuler</button>
+      <button class="btn-primary" onclick="saveProfileEdit()" style="flex:1"><i class="fas fa-save"></i> <span data-i18n="save">Enregistrer</span></button>
+    </div>
+  </div>
+</div>
+
+<!-- INTERESTED MODAL -->
+<div id="interestedModal" class="modal-overlay" style="display:none">
+  <div class="modal-box" style="text-align:center;max-width:400px">
+    <div style="font-size:3rem;margin-bottom:12px">🌟</div>
+    <h3 style="font-family:var(--font-display);font-size:1.3rem;margin-bottom:8px" data-i18n="interested">Vous êtes intéressé(e) !</h3>
+    <p style="color:var(--gray);font-size:0.9rem;margin-bottom:20px" data-i18n="contactHow">Choisissez comment contacter le propriétaire :</p>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <button class="btn-primary" style="background:#25D366;justify-content:center;font-size:1rem" onclick="closeInterestedModal('wa')"><i class="fab fa-whatsapp"></i> <span data-i18n="contactWA">Contacter sur WhatsApp</span></button>
+      <button class="btn-secondary" style="justify-content:center;color:var(--green);border-color:var(--green);font-size:1rem" onclick="closeInterestedModal('call')"><i class="fas fa-phone"></i> <span data-i18n="callDirect">Appeler directement</span></button>
+      <button class="btn-secondary" style="justify-content:center" onclick="closeInterestedModal('msg')"><i class="fas fa-comment-dots"></i> <span data-i18n="sendMsg">Envoyer un message</span></button>
+    </div>
+    <button onclick="document.getElementById('interestedModal').style.display='none'" style="background:none;color:var(--gray);margin-top:16px;font-size:0.85rem" data-i18n="close">Fermer</button>
+  </div>
+</div>
+
+<!-- CALL SCREEN -->
+<div id="callScreen" class="call-screen hidden">
+  <div class="call-bg"></div>
+  <img id="callAvatar" src="" alt="" class="call-avatar"/>
+  <div id="callName" class="call-name"></div>
+  <div id="callStatus" class="call-status">Appel en cours…</div>
+  <div id="callTimer" class="call-timer">00:00</div>
+  <div class="call-controls">
+    <button onclick="toggleMute()" id="muteBtn" class="call-btn"><i class="fas fa-microphone"></i></button>
+    <button onclick="endCall()" class="call-btn call-end"><i class="fas fa-phone-slash"></i></button>
+    <button onclick="toggleSpeaker()" class="call-btn"><i class="fas fa-volume-up"></i></button>
+  </div>
+</div>
+
+<!-- AI WIDGET -->
+<div id="aiWidget" class="ai-widget">
+  <div id="aiChatWindow" class="ai-chat-window hidden">
+    <div class="ai-chat-header">
+      <span>🤖 <span data-i18n="aiAssistant">Assistant Afrique IA</span></span>
+      <button onclick="toggleAI()"><i class="fas fa-times"></i></button>
+    </div>
+    <div id="aiMessages" class="ai-messages">
+      <div class="ai-msg bot" data-i18n="aiGreet">👋 Bonjour ! Je suis votre assistant Afrique Immo IA. Posez-moi n'importe quelle question !</div>
+    </div>
+    <div class="ai-input-bar">
+      <input type="text" id="aiInput" placeholder="Posez votre question…" onkeydown="if(event.key==='Enter')sendAIMessage()"/>
+      <button onclick="sendAIMessage()"><i class="fas fa-paper-plane"></i></button>
+    </div>
+  </div>
+  <button class="ai-toggle-btn" onclick="toggleAI()"><span>🤖</span><span class="ai-pulse"></span></button>
+</div>
+
+<div id="toast" class="toast hidden"></div>
+<div id="loadingOverlay" class="loading-overlay hidden">
+  <div class="loading-spinner"></div>
+  <p id="loadingText">Chargement…</p>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
